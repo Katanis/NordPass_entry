@@ -12,6 +12,3 @@
 * Add tests
 * Refactor to make the code neat and clean - this will keep your teammates happy
 * Fix as many errors as you notice
-
-
-Please push your solution to a GitHub repository.
