@@ -6,6 +6,7 @@ import { addToken, removeToken, getTokenOwner, generateToken } from '../services
 const router = Router();
 
 // if password and email is correct returns new token
+//Should be signUp and password should be bcrypted
 router.post('/api/login',timeout, (req, res) => {
   const {username, password} = req.body;
 
