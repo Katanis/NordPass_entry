@@ -13,7 +13,7 @@ interface IUpdateModal {
   item: IItem;
 }
 
-const FormDialog = ({ item }: IUpdateModal) => {
+const UpdateModal = ({ item }: IUpdateModal) => {
   const [open, setOpen] = useState(false);
   const [newPass, setNewPass] = useState("");
 
@@ -69,4 +69,4 @@ const FormDialog = ({ item }: IUpdateModal) => {
   );
 };
 
-export default FormDialog;
+export default UpdateModal;
