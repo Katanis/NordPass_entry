@@ -6,8 +6,9 @@ import { addToken, removeToken, getTokenOwner, generateToken } from '../services
 const router = Router();
 
 // if password and email is correct returns new token
-router.get('/api/login',timeout, (req, res) => {
-  const {username, password} = req.query;
+//Should be signUp and password should be bcrypted
+router.post('/api/login',timeout, (req, res) => {
+  const {username, password} = req.body;
 
   const user = users.find((user) => (
     user.username === username &&
@@ -33,7 +34,7 @@ router.get('/api/login',timeout, (req, res) => {
 
 // deletes token
 router.get('/api/logout', (req, res) => {
-  const token = req.headers.authorization?.split(' ')?.[1];
+  const token = req.headers.authorization;
 
   if (token) {
     removeToken(token);

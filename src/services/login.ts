@@ -1,17 +1,25 @@
-import {API} from '~/constants';
-import getUrl from '../utils/getUrl';
+import { API } from "~/constants";
+import getUrl from "../utils/getUrl";
 
 const login = async (username: string, password: string) => {
-  const url = getUrl(API.Login, {
+  const headers = {
+    "Content-Type": "application/json",
+    "Access-Control-Origin": "*",
+  };
+
+  const data = {
     username,
     password,
+  };
+  const url = getUrl(API.Login);
+  const response = await fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(data)
   });
-
-  const response = await fetch(url);
-  const data = await response.json();
-  const { token } = data;
-
-  localStorage.setItem('token', token);
+  const jsonResponse = await response.json();
+  const { token } = jsonResponse;
+  localStorage.setItem("token", token);
 };
 
 export default login;
