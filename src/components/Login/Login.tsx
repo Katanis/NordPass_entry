@@ -20,7 +20,8 @@ const Login = () => {
       await login(username, password);
       push(Routes.PasswordHealth);
     } catch (error) {
-      setErrorMessage(error.message);
+      console.error(error.message);
+      setErrorMessage('Login failed wrong user credentials');
     }
   };
 
