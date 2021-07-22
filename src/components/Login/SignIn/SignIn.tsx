@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Avatar,
   Box,
@@ -12,12 +13,19 @@ import {
   Typography,
 } from "@material-ui/core";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
+import * as yup from "yup";
 import { Routes } from "~/constants";
 import login from "~/services/login";
 
 import ErrorBlock from "../../ErrorBlock";
+
+const schema = yup.object().shape({
+  username: yup.string().required(),
+  password: yup.string().required(),
+});
 
 const Copyright = () => {
   return (
@@ -55,21 +63,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+type LoginFormData = {
+  username: string;
+  password: string;
+};
+
 const SignIn = () => {
   const classes = useStyles();
   const { push } = useHistory();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const { handleSubmit, control } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
     setLoggingIn(true);
     setErrorMessage(null);
 
     try {
-      await login(username, password);
+      await login(data.username, data.password);
       push(Routes.PasswordHealth);
     } catch (error) {
       setLoggingIn(false);
@@ -85,33 +99,56 @@ const SignIn = () => {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            value={username}
-            required
-            fullWidth
-            id="username"
-            label="Username"
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Controller
             name="username"
-            autoComplete="username"
-            onChange={(event) => setUsername(event.target.value)}
-            autoFocus
+            control={control}
+            defaultValue=""
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <TextField
+                variant="outlined"
+                margin="normal"
+                value={value}
+                required
+                fullWidth
+                error={!!error}
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                onChange={onChange}
+                autoFocus
+              />
+            )}
+            rules={{ required: "Password required" }}
           />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            onChange={(event) => setPassword(event.target.value)}
-            value={password}
-            fullWidth
+          <Controller
             name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
+            control={control}
+            defaultValue=""
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                onChange={onChange}
+                value={value}
+                fullWidth
+                error={!!error}
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+            )}
+            rules={{ required: "Password required" }}
           />
+
           {loggingIn ? <LinearProgress /> : null}
           <ErrorBlock error={errorMessage} />
           <Button
